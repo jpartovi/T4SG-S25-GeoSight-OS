@@ -24,6 +24,7 @@ from drf_yasg import openapi
 from drf_yasg.generators import OpenAPISchemaGenerator
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
+from django.conf.urls.i18n import i18n_patterns
 
 from core.api.access_request import (
     AccessRequestList, AccessRequestDetail, AccessRequestCount
@@ -73,6 +74,7 @@ urlpatterns = [
     url(r'^api/v1/docs/$', schema_view_v1.with_ui(
         'swagger', cache_timeout=0),
         name='schema-swagger-ui'),
+	url(r'^i18n/', include('django.conf.urls.i18n')),
 ]
 
 if settings.USE_AZURE:
@@ -154,4 +156,5 @@ urlpatterns += [
     url(r'^captcha/', include('captcha.urls')),
     url(r'^', include('geosight.urls')),
     url(r'^', include('frontend.urls')),
+    i18n_patterns(prefix_default_language=False),
 ]

@@ -15,6 +15,7 @@ __date__ = '13/06/2023'
 __copyright__ = ('Copyright 2023, Unicef')
 
 import os  # noqa
+import environ
 
 from core.settings.utils import ABS_PATH
 
@@ -40,6 +41,12 @@ USE_L10N = True
 USE_TZ = True
 
 BASE_DIR = ABS_PATH('')
+
+# BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# env = environ.Env()
+
+# # If your .env is in a separate sibling folder
+# env.read_env(os.path.abspath(os.path.join(BASE_DIR, '../deployment/.env')))
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/var/www/example.com/media/"
@@ -146,9 +153,12 @@ REST_FRAMEWORK = {
 LOGIN_URL = '/login/'
 SITE_ID = 1
 
-SECRET_KEY = os.environ['SECRET_KEY']
-if SECRET_KEY in ['', "''"]:
+SECRET_KEY = env('SECRET_KEY')
+if not SECRET_KEY:
     raise Exception('SECRET_KEY is required in env.')
+# SECRET_KEY = os.environ['SECRET_KEY']
+# if SECRET_KEY in ['', "''"]:
+#     raise Exception('SECRET_KEY is required in env.')
 
 STATICFILES_STORAGE = (
     'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
@@ -161,8 +171,8 @@ CACHES = {
     'default': {
         "BACKEND": "django_redis.cache.RedisCache",
         'LOCATION': (
-            f'redis://default:{os.environ.get("REDIS_PASSWORD", "")}'
-            f'@{os.environ.get("REDIS_HOST", "")}',
+            f'redis://default:{env("REDIS_PASSWORD", default="")}'
+            f'@{env("REDIS_HOST", default="")}',
         ),
         "OPTIONS": {
             "SOCKET_CONNECT_TIMEOUT": 5,
@@ -172,3 +182,14 @@ CACHES = {
         }
     }
 }
+
+# Available languages*
+LANGUAGES = [
+	('en', 'English'),
+    ('fr', 'French'),
+]
+
+# Locale paths*
+LOCALE_PATHS = [
+	os.path.join(BASE_DIR, 'locale'),
+]
