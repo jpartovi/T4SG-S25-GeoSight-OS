@@ -44,6 +44,10 @@ class DashboardBookmarkForm(forms.ModelForm):
         data['extent'] = poly
         data['filters'] = json.dumps(data['filters'])
 
+        # Handle description
+        if 'description' not in data:
+            data['description'] = ''
+
         # Check other foreign key
         try:
             data['selected_basemap'] = BasemapLayer.objects.get(

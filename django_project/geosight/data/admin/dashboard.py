@@ -150,7 +150,7 @@ class DashboardContextLayerAdmin(admin.ModelAdmin):
 class DashboardBookmarkAdmin(admin.ModelAdmin):
     """DashboardBookmark admin."""
 
-    list_display = ('dashboard', 'name',)
+    list_display = ('dashboard', 'name', 'description')
     list_filter = ('dashboard',)
     filter_horizontal = ('selected_context_layers',)
 

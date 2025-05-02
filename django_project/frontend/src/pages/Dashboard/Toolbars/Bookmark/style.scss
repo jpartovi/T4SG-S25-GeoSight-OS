@@ -63,7 +63,8 @@
       margin-top: -2px;
     }
 
-    .EditIcon, .DeleteIcon {
+    .EditIcon,
+    .DeleteIcon {
       color: var(--base-black-color);
 
       &:hover {
@@ -97,5 +98,14 @@
       font-size: 0.7rem;
       color: #555 !important;
     }
+  }
+
+  .bookmark-description {
+    font-size: 0.85em;
+    color: #666;
+    margin-top: 4px;
+    max-width: 300px;
+    white-space: pre-wrap;
+    word-break: break-word;
   }
 }

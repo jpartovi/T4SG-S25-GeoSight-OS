@@ -27,6 +27,7 @@ class DashboardBookmarkSerializer(serializers.ModelSerializer):
     filters = serializers.SerializerMethodField()
     creator = serializers.SerializerMethodField()
     extent = serializers.SerializerMethodField()
+    description = serializers.CharField(required=False, allow_blank=True)
 
     def get_filters(self, obj: DashboardBookmark):
         """Return filters."""
