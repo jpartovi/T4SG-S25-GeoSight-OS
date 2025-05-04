@@ -141,6 +141,8 @@ export default function StoryMapsForm() {
     relatedTables: dashboardRelatedTables,
     indicatorLayers,
     indicatorLayersStructure,
+    storyMaps,
+    storyMapsStructure,
     referenceLayer
   } = useSelector(state => state.dashboard.data);
   const indicators = dictDeepCopy(dashboardIndicators, true)
@@ -213,7 +215,7 @@ export default function StoryMapsForm() {
   return <Fragment>
     <p> Hello this is another test</p>
     <ListForm
-      pageName={'Story Maps'}
+      pageName={'Indicator Layers'}
       data={
         indicatorLayers.map(layer => {
           layer.trueId = -1
