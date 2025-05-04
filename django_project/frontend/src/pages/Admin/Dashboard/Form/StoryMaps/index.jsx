@@ -33,7 +33,8 @@ import {
   DynamicIndicatorType,
   MultiIndicatorType,
   RelatedTableLayerType,
-  SingleIndicatorType
+  SingleIndicatorType,
+  StoryMapType,
 } from "../../../../../utils/indicatorLayer";
 
 import './style.scss';
@@ -66,20 +67,6 @@ export function IndicatorLayerConfig(
         </ModalHeader>
         <ModalContent>
           <div
-            className={'ModalSelection-Option ' + (indicators.length > 0 ? 'Enabled' : '')}
-            onClick={() => {
-              if (indicators.length > 0) {
-                onSelected(SingleIndicatorType)
-                onClosed()
-              }
-            }}>
-            <b className='light'>Single Indicator Layer</b>
-            <div className='helptext'>
-              Select multiple indicator on the list and turn each of it as
-              single indicator layer.
-            </div>
-          </div>
-          <div
             className={'ModalSelection-Option ' + (indicators.length > 1 ? 'Enabled' : '')}
             onClick={() => {
               if (indicators.length > 1) {
@@ -91,38 +78,6 @@ export function IndicatorLayerConfig(
             <div className='helptext'>
               Select 2 or more indicators and turn all of it as single
               indicator layer.
-            </div>
-          </div>
-          <div
-            className={'ModalSelection-Option ' + (relatedTables.length > 0 && referenceLayer.identifier ? 'Enabled' : '')}
-            onClick={() => {
-              if (relatedTables.length > 0 && referenceLayer.identifier) {
-                onSelected(RelatedTableLayerType)
-                onClosed()
-              }
-            }}>
-            <b className='light'>Related Table Layer</b>
-            {
-              referenceLayer.identifier ? '' : <div className='helptext error'>
-                This is disabled, please select reference layer to enable it.
-              </div>
-            }
-            <div className='helptext'>
-              Create indicator layer from related table.
-            </div>
-          </div>
-          <div
-            className={'ModalSelection-Option ' + (indicators.length ? 'Enabled' : '')}
-            onClick={() => {
-              if (indicators.length) {
-                onSelected(DynamicIndicatorType)
-                onClosed()
-              }
-            }}>
-            <b className='light'>Dynamic Indicators Layer</b>
-            <div className='helptext'>
-              Create dynamic indicator layer using custom expression and user
-              feedback.
             </div>
           </div>
         </ModalContent>
@@ -145,7 +100,7 @@ export default function StoryMapsForm() {
     storyMapsStructure,
     referenceLayer
   } = useSelector(state => state.dashboard.data);
-  const indicators = dictDeepCopy(dashboardIndicators, true)
+  const indicators = ["hi", "hi", "hi3"]
   const relatedTables = dictDeepCopy(dashboardRelatedTables, true)
   const referenceLayerData = useSelector(state => state.referenceLayerData[referenceLayer?.identifier]);
 
@@ -215,7 +170,7 @@ export default function StoryMapsForm() {
   return <Fragment>
     <p> Hello this is another test</p>
     <ListForm
-      pageName={'Indicator Layers'}
+      pageName={'Story Maps'}
       data={
         indicatorLayers.map(layer => {
           layer.trueId = -1
