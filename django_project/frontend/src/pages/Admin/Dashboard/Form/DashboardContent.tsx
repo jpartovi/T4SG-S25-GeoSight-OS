@@ -20,6 +20,7 @@ import GeneralForm from "./General";
 import BasemapsForm from "./Basemaps";
 import IndicatorsForm from "./Indicators";
 import IndicatorLayersForm from "./IndicatorLayers";
+import StoryMapsForm from "./StoryMaps";
 import ContextLayerForm from "./ContextLayer";
 import FiltersForm from "./Filters";
 import WidgetForm from "./Widgets";
@@ -43,26 +44,28 @@ export const DashboardFormContent = memo(
         {
           user_permission !== undefined ?
             <>
-              <GeneralForm/>
-              <IndicatorLayersControl/>
+              <GeneralForm />
+              <IndicatorLayersControl />
               {
-                page == PAGES.BASEMAPS ? <BasemapsForm/> :
-                  page == PAGES.INDICATORS ? <IndicatorsForm/> :
-                    page == PAGES.INDICATOR_LAYERS ? <IndicatorLayersForm/> :
-                      page == PAGES.CONTEXT_LAYERS ? <ContextLayerForm/> :
-                        page == PAGES.FILTERS ? <FiltersForm/> :
-                          page == PAGES.WIDGETS ? <WidgetForm/> :
+                page == PAGES.BASEMAPS ? <BasemapsForm /> :
+                  page == PAGES.INDICATORS ? <IndicatorsForm /> :
+                    page == PAGES.INDICATOR_LAYERS ? <IndicatorLayersForm /> :
+                      page == PAGES.CONTEXT_LAYERS ? <ContextLayerForm /> :
+                        page == PAGES.FILTERS ? <FiltersForm /> :
+                          page == PAGES.WIDGETS ? <WidgetForm /> :
                             page == PAGES.RELATED_TABLES ?
-                              <RelatedTableForm/> :
-                              page == PAGES.TOOLS ? <ToolsForm/> :
+                              <RelatedTableForm /> :
+                              page == PAGES.TOOLS ? <ToolsForm /> :
                                 page == PAGES.SHARE && user_permission.share ?
-                                  <ShareForm/> : null
+                                  <ShareForm /> :
+                                  page == PAGES.STORYMAPS ? <StoryMapsForm /> :
+                                    null
 
               }
             </> :
             <div className='DashboardFormLoading'>
               <div className='DashboardFormLoadingSection'>
-                <CircularProgress/>
+                <CircularProgress />
                 <div>
                   Fetching project data...
                 </div>

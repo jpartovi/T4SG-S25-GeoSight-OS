@@ -92,6 +92,10 @@ export const DashboardFormHeader = memo(
         title={'Basemaps'} dataKey={'basemapsLayers'}
       />
       <DashboardFormHeaderButtonWithNoData
+        page={page} setPage={setPageCallback} targetPage={PAGES.STORYMAPS}
+        title={'Story Maps'}
+      />
+      <DashboardFormHeaderButtonWithNoData
         page={page} setPage={setPageCallback} targetPage={PAGES.FILTERS}
         title={'Filters'}
       />
