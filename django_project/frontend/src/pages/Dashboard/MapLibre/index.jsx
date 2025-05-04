@@ -340,11 +340,6 @@ export default function MapLibre(
         <Plugin className='BookmarkControl'>
           <Bookmark map={map}/>
         </Plugin>
-        <Plugin className='StorymapControl'>
-          <p>
-            hello. this is a test.
-          </p>
-        </Plugin>
         {
           rightPanelProps ?
             <ToggleSidePanel
