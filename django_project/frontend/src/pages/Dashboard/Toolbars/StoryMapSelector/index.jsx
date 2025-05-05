@@ -32,22 +32,29 @@ export default function StoryMapSelector({ map }) {
   ]
 
   const onSelect = async () => {
-    console.log('onSelect');
-    const _data = projectCheckpointRef.current.getData();
-    const data = {
+    // Get current map state from project checkpoint
+    const mapState = projectCheckpointRef.current.getData();
+
+    // Configure embed to only show map and story tab
+    const embedConfig = {
       layer_tab: false,
       filter_tab: false,
-      map: true,
       widget_tab: false,
+      map: true,
+      story_tab: true,
+      ...mapState // Include current map state
     }
+
     try {
+      // Create embed with config
       const response = await DjangoRequests.post(
         urls.embedDetail,
-        { ...data, ..._data }
-      )
-      const code = `${domain()}/embed/${response.data.code}`
-      // GO TO THIS URL
-      window.open(code, '_blank');
+        embedConfig
+      );
+
+      // Open embed URL in new tab
+      const embedUrl = `${domain()}/embed/${response.data.code}`;
+      window.open(embedUrl, '_blank');
     } catch (err) {
       console.error("Error creating storymap embed:", err);
     }

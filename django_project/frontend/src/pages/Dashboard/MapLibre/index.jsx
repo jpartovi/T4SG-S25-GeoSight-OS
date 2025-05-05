@@ -60,6 +60,7 @@ import { PopupToolbars } from "../Toolbars/PopupToolbars";
 import { Variables } from "../../../utils/Variables";
 import { addLayerWithOrder } from "./Render";
 import StoryMapSelector from '../Toolbars/StoryMapSelector';
+import BottomPanel from '../MiddlePanel/BottomPanel';
 
 maplibregl.addProtocol('cog', cogProtocol);
 
@@ -292,6 +293,7 @@ export default function MapLibre(
           </div>
         </Plugin>
         <GlobalDateSelector />
+        <BottomPanel />
       </div>
 
       <div className='Toolbar-Middle'>
