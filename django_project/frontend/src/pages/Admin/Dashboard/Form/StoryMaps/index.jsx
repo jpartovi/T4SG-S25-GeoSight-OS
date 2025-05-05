@@ -100,6 +100,8 @@ export default function StoryMapsForm() {
     storyMapsStructure,
     referenceLayer
   } = useSelector(state => state.dashboard.data);
+
+  console.log("indicatorLayers", indicatorLayers);
   const indicators = ["hi", "hi", "hi3"]
   const relatedTables = dictDeepCopy(dashboardRelatedTables, true)
   const referenceLayerData = useSelector(state => state.referenceLayerData[referenceLayer?.identifier]);
@@ -165,7 +167,12 @@ export default function StoryMapsForm() {
     })
     dispatch(Actions.IndicatorLayers.remove(layer))
   }
-
+  console.log("ListForm props preview:", {
+    data: indicatorLayers,
+    dataStructure: indicatorLayersStructure,
+    defaultListData: indicators,
+  });
+  
   /* this is what will be displayed :) */
   return <Fragment>
     <p> Hello this is another test</p>
