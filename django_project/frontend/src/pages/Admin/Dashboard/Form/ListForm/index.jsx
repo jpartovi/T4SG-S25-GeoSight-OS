@@ -326,37 +326,20 @@ export default function ListForm(
                 pageName={pageName}
                 {...props.listConfig}
               /> :
-              // <SortableTree
-              //   data={treeData}
-              //   changeGroupName={changeGroupName}
-              //   changeLayer={changeLayer}
-              //   otherActionsFunction={otherActionsFunction}
-              //   rearrangeLayers={structure => {
-              //     setDataStructure({ ...structure })
-              //   }}
-              //   addLayerInGroup={addLayerInGroup}
-              //   removeGroup={removeGroup}
-              //   removeLayer={removeLayer}
-              //   editLayerInGroupAction={editLayerInGroupAction}
-              //   isIndicator={pageName === 'Indicators'}
-              //   collapsible indicator/>
-              <div>
-                <h3>Tree Data Output</h3>
-                {treeData.map((node, index) => (
-                  <div key={node.id}>
-                    <strong>{node.name}</strong> ({node.isGroup ? 'Group' : 'Layer'})
-                    {node.children?.length > 0 && (
-                      <ul>
-                        {node.children.map(child => (
-                          <li key={child.id || index + '-' + child.name}>
-                            {child.name}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                ))}
-              </div>
+              <SortableTree
+                data={treeData}
+                changeGroupName={changeGroupName}
+                changeLayer={changeLayer}
+                otherActionsFunction={otherActionsFunction}
+                rearrangeLayers={structure => {
+                  setDataStructure({ ...structure })
+                }}
+                addLayerInGroup={addLayerInGroup}
+                removeGroup={removeGroup}
+                removeLayer={removeLayer}
+                editLayerInGroupAction={editLayerInGroupAction}
+                isIndicator={pageName === 'Indicators'}
+                collapsible indicator/>
           }
 
           {

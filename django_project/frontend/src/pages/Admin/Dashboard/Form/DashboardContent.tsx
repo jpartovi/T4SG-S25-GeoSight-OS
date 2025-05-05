@@ -58,9 +58,11 @@ export const DashboardFormContent = memo(
                               page == PAGES.TOOLS ? <ToolsForm /> :
                                 page == PAGES.SHARE && user_permission.share ?
                                   <ShareForm /> :
-                                  page == PAGES.STORYMAPS ? <StoryMapsForm /> :
-                                    null
-
+                                  page === PAGES.STORYMAPS ? (
+                                    <div style={{ display: 'block', height: 'auto', opacity: 1 }}>
+                                      <StoryMapsForm />
+                                    </div>
+                                  ) : null
               }
             </> :
             <div className='DashboardFormLoading'>

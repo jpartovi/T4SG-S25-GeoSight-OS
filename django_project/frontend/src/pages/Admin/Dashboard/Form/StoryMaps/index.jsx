@@ -175,7 +175,6 @@ export default function StoryMapsForm() {
   
   /* this is what will be displayed :) */
   return <Fragment>
-    <p> Hello this is another test</p>
     <ListForm
       pageName={'Story Maps'}
       data={
@@ -211,81 +210,24 @@ export default function StoryMapsForm() {
       openDataSelection={indicatorDataSelectionOpen}
       setOpenDataSelection={setIndicatorDataSelectionOpen}
       otherActionsFunction={(layer) => {
-        if (layer.type === DynamicIndicatorType) {
-          return <div className='OtherActionFunctionsWrapper'>
-            <div className='LayerCountIndicatorWrapper'>
-              <div className='Separator'></div>
-              <div className='LayerCountIndicator'>Dynamic</div>
-            </div>
-            <DynamicIndicatorConfig
-              key={layer.id}
-              indicators={indicators}
-              indicatorLayer={layer}
-              onUpdate={
-                (layer) => {
-                  dispatch(Actions.IndicatorLayers.update(layer))
-                }
-              } />
-          </div>
-        } else if (layer.indicators.length === 1) {
-          // If it is single indicator
-          const indicator = indicators.find(indicatorData => {
-            return indicatorData.id === layer.indicators[0].id
-          })
-          if (indicator) {
-            return <div className='OtherActionFunctionsWrapper'>
-              <div className='LayerCountIndicatorWrapper'>
-                <div className='Separator'></div>
-                <div className='LayerCountIndicator'>Single</div>
-              </div>
-              <IndicatorStyle indicator={indicator} indicatorLayer={layer} />
-            </div>
-          }
-        } else if (layer.related_tables?.length) {
-          // If it is single indicator
-          const rt = dashboardRelatedTables.find(rt => {
-            return rt.id === layer.related_tables[0].id
-          })
-          if (rt) {
-            return <div className='OtherActionFunctionsWrapper'>
-              <div className='LayerCountIndicatorWrapper'>
-                <div className='Separator'></div>
-                <div className='LayerCountIndicator'>Related Table</div>
-              </div>
-              <RelatedTableLayerConfig
-                key={layer.id}
-                referenceLayerData={referenceLayerData}
-                relatedTables={relatedTables}
-                layer={layer}
-                onUpdate={
-                  (layer) => {
-                    dispatch(
-                      Actions.IndicatorLayers.update(layer)
-                    )
-                  }
-                } />
-            </div>
-          }
-        } else {
-          // If it is multi indicator
-          return <div className='OtherActionFunctionsWrapper'>
+        // Show only Multi Indicator Layer config
+        return (
+          <div className='OtherActionFunctionsWrapper'>
             <div className='LayerCountIndicatorWrapper'>
               <div className='Separator'></div>
               <div className='LayerCountIndicator'>
-                {layer.indicators.length + ' Layers (' + (layer.multi_indicator_mode) + ')'}
+                {layer.indicators.length + ' Layers (' + (layer.multi_indicator_mode || 'multi') + ')'}
               </div>
             </div>
             <MultiIndicatorConfig
               indicators={indicators}
               indicatorLayer={layer}
-              onUpdate={
-                (layer) => {
-                  dispatch(Actions.IndicatorLayers.update(layer))
-                }
-              } />
+              onUpdate={(layer) => {
+                dispatch(Actions.IndicatorLayers.update(layer))
+              }}
+            />
           </div>
-        }
-        return ""
+        )
       }}
     />
     <p>hello this is yet another test </p>
