@@ -401,14 +401,14 @@ export function dataStructureToListData(data, dataStructure, parentGroupId = [])
     if (child.group) {
       const groupId = child.id ? child.id : '';
       output = output.concat([
-          {
-            id: groupId,
-            name: child.group,
-            isGroup: true,
-            data: null
+        {
+          id: groupId,
+          name: child.group,
+          isGroup: true,
+          data: null
 
-          }
-        ]
+        }
+      ]
       )
       output = output.concat(
         dataStructureToListData(data, child, groupId)

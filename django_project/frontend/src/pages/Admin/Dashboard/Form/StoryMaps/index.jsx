@@ -14,286 +14,97 @@
  */
 
 import React, { Fragment, useState } from 'react';
-import { useDispatch, useSelector } from "react-redux";
-import { Actions } from "../../../../../store/dashboard";
-import ListForm from "../ListForm";
-import Modal, {
-  ModalContent,
-  ModalHeader
-} from "../../../../../components/Modal";
-import { IndicatorStyle } from './IndicatorStyle'
-import MultiIndicatorConfig from "./MultiIndicator";
-import RelatedTableLayerConfig from "./RelatedTable";
-import DynamicIndicatorConfig from "./DynamicIndicator";
-import { dictDeepCopy } from "../../../../../utils/main";
-import {
-  removeChildInGroupInStructure
-} from "../../../../../components/SortableTreeForm/utilities";
-import {
-  DynamicIndicatorType,
-  MultiIndicatorType,
-  RelatedTableLayerType,
-  SingleIndicatorType,
-  StoryMapType,
-} from "../../../../../utils/indicatorLayer";
-
+import { useDispatch, useSelector } from 'react-redux';
+import { Actions } from '../../../../../store/dashboard';
+import StoryMapsListForm from '../StoryMapsListForm';
+import Modal, { ModalContent, ModalHeader } from '../../../../../components/Modal';
+import { dictDeepCopy } from '../../../../../utils/main';
+import StorySlideEditor from './StorySlideEditor'; // Your new component
 import './style.scss';
 
-/**
- * Indicator Layer Type Selection
- * @param {boolean} open Is open or close.
- * @param {Function} setOpen Set Parent Open.
- * @param {Function} onSelected On selected data.
- */
-export function IndicatorLayerConfig(
-  {
-    open, setOpen, onSelected,
-    indicators, relatedTables, referenceLayer
-  }) {
-
-  const onClosed = () => {
-    setOpen(false);
-  };
-
-  return (
-    <Fragment>
-      <Modal
-        open={open}
-        onClosed={onClosed}
-        className="ModalSelection IndicatorLayerCreateTypeSelection"
-      >
-        <ModalHeader onClosed={onClosed}>
-          Add new indicator layer
-        </ModalHeader>
-        <ModalContent>
-          <div
-            className={'ModalSelection-Option ' + (indicators.length > 1 ? 'Enabled' : '')}
-            onClick={() => {
-              if (indicators.length > 1) {
-                onSelected(MultiIndicatorType)
-                onClosed()
-              }
-            }}>
-            <b className='light'>Multi Indicators Layer</b>
-            <div className='helptext'>
-              Select 2 or more indicators and turn all of it as single
-              indicator layer.
-            </div>
-          </div>
-        </ModalContent>
-      </Modal>
-    </Fragment>
-  )
-}
-
-/**
- * Indicator Layers Tab dashboard
- */
 export default function StoryMapsForm() {
   const dispatch = useDispatch();
   const {
     indicators: dashboardIndicators,
     relatedTables: dashboardRelatedTables,
-    indicatorLayers,
-    indicatorLayersStructure,
-    storyMaps,
-    storyMapsStructure,
+    indicatorLayers, // now treated as slides
+    indicatorLayersStructure, // treated as storyMap structure
     referenceLayer
   } = useSelector(state => state.dashboard.data);
 
-  console.log("indicatorLayers", indicatorLayers);
-  const indicators = ["hi", "hi", "hi3"]
-  const relatedTables = dictDeepCopy(dashboardRelatedTables, true)
+  const indicators = dashboardIndicators;
+  const relatedTables = dictDeepCopy(dashboardRelatedTables, true);
   const referenceLayerData = useSelector(state => state.referenceLayerData[referenceLayer?.identifier]);
 
-  // Handling for create layer
-  const [groupName, setGroupName] = useState(false)
+  const [currentMapName, setCurrentMapName] = useState('');
+  const [slideEditorOpen, setSlideEditorOpen] = useState(false);
 
-  // Config modal
-  const [indicatorDataSelectionOpen, setIndicatorDataSelectionOpen] = useState(false)
-  const [indicatorLayerConfigOpen, setIndicatorLayerConfigOpen] = useState(false)
-  const [multiIndicatorStyleOpen, setMultiIndicatorStyleOpen] = useState(false)
-  const [relatedTableLayerOpen, setRelatedTableLayerOpen] = useState(false)
-  const [dynamicIndicatorStyleOpen, setDynamicIndicatorStyleOpen] = useState(false)
-
-  // When the indicator layer type selected
-  const IndicatorLayerTypeSelection = (type) => {
-    switch (type) {
-      case SingleIndicatorType: {
-        setIndicatorDataSelectionOpen(true)
-        break
-      }
-      case MultiIndicatorType: {
-        setMultiIndicatorStyleOpen(true)
-        break
-      }
-      case RelatedTableLayerType: {
-        setRelatedTableLayerOpen(true)
-        break
-      }
-      case DynamicIndicatorType: {
-        setDynamicIndicatorStyleOpen(true)
-        break
-      }
-    }
-  }
-
-  /** Change indicator data format to indicator layer data. **/
-  const indicatorToIndicatorLayer = (layer) => {
-    return {
-      name: layer.name,
-      visible_by_default: false,
-      group: groupName,
-      description: layer.description,
-      rules: layer.rules,
-      type: layer.type,
-      indicators: [{
-        id: layer.id,
-        name: layer.name,
-        color: null
-      }]
-    }
-  }
-
-
-  /** Remove layer **/
-  const removeLayer = (layer) => {
-    removeChildInGroupInStructure(layer.group, layer.id, indicatorLayersStructure, _ => {
-      dispatch(
-        Actions.Dashboard.updateStructure(
-          'indicatorLayersStructure', indicatorLayersStructure
-        )
-      )
-    })
-    dispatch(Actions.IndicatorLayers.remove(layer))
-  }
-  console.log("ListForm props preview:", {
-    data: indicatorLayers,
-    dataStructure: indicatorLayersStructure,
-    defaultListData: indicators,
+  const createCheckpointFromIndicator = (indicatorId) => ({
+    selected_indicator_layers: [indicatorId],
+    selected_context_layers: [],
+    selected_basemap: 0,
+    filters: {},
+    extent: null,
+    indicator_layer_show: true,
+    context_layer_show: false,
+    selected_admin_level: 0,
+    is_3d_mode: false,
+    position: { x: 0, y: 0, z: 0 }
   });
-  
-  /* this is what will be displayed :) */
-  return <Fragment>
-    <ListForm
-      pageName={'Story Maps'}
-      data={
-        indicatorLayers.map(layer => {
-          layer.trueId = -1
-          return layer
-        })
-      }
-      dataStructure={indicatorLayersStructure}
-      setDataStructure={structure => {
-        dispatch(
-          Actions.Dashboard.updateStructure('indicatorLayersStructure', structure)
-        )
-      }}
-      defaultListData={indicators}
-      addLayerAction={(layer, group) => {
-        dispatch(
-          Actions.IndicatorLayers.add(
-            indicatorToIndicatorLayer(layer)
-          )
-        )
-      }}
-      removeLayerAction={removeLayer}
-      changeLayerAction={(layer) => {
-        dispatch(Actions.IndicatorLayers.update(layer))
-      }}
-      addLayerInGroupAction={(groupName) => {
-        setGroupName(groupName)
-        setIndicatorLayerConfigOpen(true)
-      }}
 
-      /* For data selection */
-      openDataSelection={indicatorDataSelectionOpen}
-      setOpenDataSelection={setIndicatorDataSelectionOpen}
-      otherActionsFunction={(layer) => {
-        // Show only Multi Indicator Layer config
-        return (
-          <div className='OtherActionFunctionsWrapper'>
-            <div className='LayerCountIndicatorWrapper'>
-              <div className='Separator'></div>
-              <div className='LayerCountIndicator'>
-                {layer.indicators.length + ' Layers (' + (layer.multi_indicator_mode || 'multi') + ')'}
-              </div>
-            </div>
-            <MultiIndicatorConfig
-              indicators={indicators}
-              indicatorLayer={layer}
-              onUpdate={(layer) => {
-                dispatch(Actions.IndicatorLayers.update(layer))
+  const removeSlide = (slide) => {
+    dispatch(Actions.IndicatorLayers.remove(slide));
+  };
+
+  return (
+    <Fragment>
+      <StoryMapsListForm
+        pageName={'Story Maps'}
+        data={indicatorLayers.map(layer => ({ ...layer, trueId: -1 }))}
+        dataStructure={indicatorLayersStructure}
+        setDataStructure={structure => {
+          dispatch(Actions.Dashboard.updateStructure('indicatorLayersStructure', structure));
+        }}
+        defaultListData={indicators.map(ind => ind.name)}
+        addLayerAction={(indicator, mapName) => {
+          const checkpoint = createCheckpointFromIndicator(indicator.id);
+          const newSlide = {
+            id: Date.now().toString(),
+            title: indicator.name,
+            description: '',
+            checkpoint,
+            group: mapName
+          };
+          dispatch(Actions.IndicatorLayers.add(newSlide));
+        }}
+        removeLayerAction={removeSlide}
+        changeLayerAction={(slide) => {
+          dispatch(Actions.IndicatorLayers.update(slide));
+        }}
+        addLayerInGroupAction={(mapName) => {
+          setCurrentMapName(mapName);
+          setSlideEditorOpen(true);
+        }}
+      />
+
+      {slideEditorOpen && (
+        <Modal open={slideEditorOpen} onClosed={() => setSlideEditorOpen(false)}>
+          <ModalHeader onClosed={() => setSlideEditorOpen(false)}>Add New Slide</ModalHeader>
+          <ModalContent>
+            <StorySlideEditor
+              existingSlide={null}
+              onSave={(slide) => {
+                slide.group = currentMapName;
+                dispatch(Actions.IndicatorLayers.add(slide));
+                setSlideEditorOpen(false);
               }}
+              onCancel={() => setSlideEditorOpen(false)}
+              availableIndicators={indicators}
             />
-          </div>
-        )
-      }}
-    />
-    <p>hello this is yet another test </p>
-
-    {/* INDICATOR LAYER LIST OF LAYER TYPE SELECTION */}
-    <IndicatorLayerConfig
-      open={indicatorLayerConfigOpen}
-      setOpen={setIndicatorLayerConfigOpen}
-      onSelected={IndicatorLayerTypeSelection}
-      indicators={indicators}
-      relatedTables={relatedTables}
-      referenceLayer={referenceLayer}
-    />
-
-    {/* THIS IS FOR MULTI INDICATOR CONFIG */}
-    <MultiIndicatorConfig
-      multiIndicatorStyleOpen={multiIndicatorStyleOpen}
-      setMultiIndicatorStyleOpen={setMultiIndicatorStyleOpen}
-      indicators={indicators}
-      onUpdate={
-        (layer) => {
-          layer.group = groupName
-          dispatch(
-            Actions.IndicatorLayers.add(
-              JSON.parse(JSON.stringify(layer))
-            )
-          )
-        }
-      }
-    />
-
-    {/* THIS IS FOR DYNAMIC INDICATOR CONFIG */}
-    <DynamicIndicatorConfig
-      openGlobal={dynamicIndicatorStyleOpen}
-      setOpenGlobal={setDynamicIndicatorStyleOpen}
-      indicators={indicators}
-      onUpdate={
-        (layer) => {
-          layer.group = groupName
-          dispatch(
-            Actions.IndicatorLayers.add(
-              JSON.parse(JSON.stringify(layer))
-            )
-          )
-        }
-      }
-    />
-
-    {/* THIS IS FOR RELATED TABLE CONFIG */}
-    {
-      referenceLayerData?.data?.name ?
-        <RelatedTableLayerConfig
-          referenceLayerData={referenceLayerData}
-          configOpen={relatedTableLayerOpen}
-          setConfigOpen={setRelatedTableLayerOpen}
-          relatedTables={relatedTables}
-          onUpdate={
-            (layer) => {
-              layer.group = groupName
-              dispatch(
-                Actions.IndicatorLayers.add(
-                  JSON.parse(JSON.stringify(layer))
-                )
-              )
-            }
-          } /> : null
-    }
-  </Fragment>
+          </ModalContent>
+        </Modal>
+      )}
+    </Fragment>
+  );
 }
+
