@@ -64,7 +64,8 @@ import { cogProtocol } from "@geomatico/maplibre-cog-protocol";
 import { PopupToolbars } from "../Toolbars/PopupToolbars";
 import { Variables } from "../../../utils/Variables";
 import { addLayerWithOrder } from "./Render";
-
+import StoryMapSelector from '../Toolbars/StoryMapSelector';
+import BottomPanel from '../MiddlePanel/BottomPanel';
 
 maplibregl.addProtocol('cog', cogProtocol);
 
@@ -354,6 +355,9 @@ export default function MapLibre(
         <DownloaderData />
         <Plugin className='BookmarkControl'>
           <Bookmark map={map} />
+        </Plugin>
+        <Plugin className='StorymapControl'>
+          <StoryMapSelector map={map} />
         </Plugin>
         {
           rightPanelProps ?
