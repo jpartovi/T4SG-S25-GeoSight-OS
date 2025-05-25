@@ -64,37 +64,6 @@ schema_view_v1 = get_schema_view(
 )
 admin.autodiscover()
 
-urlpatterns = [
-    url(r'^i18n/', include('django.conf.urls.i18n')),
-]
-
-urlpatterns += i18n_patterns(
-    url(r'^django-admin/core/sitepreferences/$', RedirectView.as_view(
-        url='/django-admin/core/sitepreferences/1/change/', permanent=False),
-        name='index'),
-
-    url(r'^', include('docs.urls')),
-    url(r'^django-admin/', admin.site.urls),
-    url(r'^api/v1/docs/$', schema_view_v1.with_ui(
-        'swagger', cache_timeout=0),
-        name='schema-swagger-ui'),
-)
-
-if settings.USE_AZURE:
-    # azure auth
-    urlpatterns += i18n_patterns(
-        path("", include("azure_auth.urls", namespace="azure_auth")),
-    )
-else:
-    urlpatterns += i18n_patterns(
-        url(r'^auth/', include('django.contrib.auth.urls')),
-    )
-
-if settings.DEBUG:
-    urlpatterns += static(
-        settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
-    )
-
 # ------------------------------------------------------
 # USER API
 user_api = [
@@ -150,13 +119,44 @@ if settings.TENANTS_ENABLED:
         url(r'^tenants/', include('geosight.tenants.urls'))
     ]
 
-urlpatterns += i18n_patterns(
-    url(r'^tinymce/', include('tinymce.urls')),
+# URLs without language prefix
+urlpatterns = [
+    url(r'^i18n/', include('django.conf.urls.i18n')),
+    # Docs URLs without language prefix
+    url(r'^', include('docs.urls')),
+    # API URLs without language prefix
+    url(r'^api/v1/docs/$', schema_view_v1.with_ui(
+        'swagger', cache_timeout=0),
+        name='schema-swagger-ui'),
     url(r'^proxy', ProxyView.as_view(), name='proxy-view'),
     url(r'^api/v1/', include('core.urls_v1')),
     url(r'^api/', include(api)),
     url(r'^sentry-debug', trigger_error),
+]
+
+# URLs with language prefix
+urlpatterns += i18n_patterns(
+    url(r'^django-admin/core/sitepreferences/$', RedirectView.as_view(
+        url='/django-admin/core/sitepreferences/1/change/', permanent=False),
+        name='index'),
+    url(r'^django-admin/', admin.site.urls),
+    url(r'^tinymce/', include('tinymce.urls')),
     url(r'^captcha/', include('captcha.urls')),
     url(r'^', include('geosight.urls')),
     url(r'^', include('frontend.urls')),
 )
+
+if settings.USE_AZURE:
+    # azure auth
+    urlpatterns += i18n_patterns(
+        path("", include("azure_auth.urls", namespace="azure_auth")),
+    )
+else:
+    urlpatterns += i18n_patterns(
+        url(r'^auth/', include('django.contrib.auth.urls')),
+    )
+
+if settings.DEBUG:
+    urlpatterns += static(
+        settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
+    )
