@@ -20,6 +20,7 @@ import GeneralForm from "./General";
 import BasemapsForm from "./Basemaps";
 import IndicatorsForm from "./Indicators";
 import IndicatorLayersForm from "./IndicatorLayers";
+import StoryMapsForm from "./StoryMaps";
 import ContextLayerForm from "./ContextLayer";
 import FiltersForm from "./Filters";
 import WidgetForm from "./Widgets";
@@ -58,8 +59,12 @@ export const DashboardFormContent = memo(
                               <RelatedTableForm /> :
                               page == PAGES.TOOLS ? <ToolsForm /> :
                                 page == PAGES.SHARE && user_permission.share ?
-                                  <ShareForm /> : null
-
+                                  <ShareForm /> :
+                                  page === PAGES.STORYMAPS ? (
+                                    <div style={{ display: 'block', height: 'auto', opacity: 1 }}>
+                                      <StoryMapsForm />
+                                    </div>
+                                  ) : null
               }
             </> :
             <div className='DashboardFormLoading'>

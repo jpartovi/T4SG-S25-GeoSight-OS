@@ -100,6 +100,9 @@ export default function ListForm(
 
   // Fetch data
   useEffect(() => {
+    const result = dataStructureToTreeData(data, dataStructure);
+    console.log("✅ treeData computed:", result);
+    setTreeData(result);
     if (listUrl) {
       if (open) {
         setListData([])

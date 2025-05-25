@@ -1,0 +1,106 @@
+/**
+* GeoSight is UNICEF's geospatial web-based business intelligence platform.
+*
+* Contact : geosight-no-reply@unicef.org
+*
+* .. note:: This program is free software; you can redistribute it and/or modify
+*     it under the terms of the GNU Affero General Public License as published by
+*     the Free Software Foundation; either version 3 of the License, or
+*     (at your option) any later version.
+*
+* __author__ = 'irwan@kartoza.com'
+* __date__ = '13/06/2023'
+* __copyright__ = ('Copyright 2023, Unicef')
+*/
+
+/* ==========================================================================
+   Indicator Layers List style
+   ========================================================================== */
+
+.StoryMaps {
+  .OtherActionFunctions {
+    width: 220px;
+  }
+
+  .OtherActionFunctionsWrapper {
+    display: flex;
+  }
+
+  .LayerCountIndicatorWrapper {
+    display: flex;
+    width: 122px;
+    color: var(--primary-color);
+
+    div:first-child {
+      flex-grow: 1;
+    }
+
+    .LayerCountIndicator {
+      width: fit-content;
+      height: 22px;
+      display: block;
+      margin-left: 0.5rem;
+      background: white;
+      border-radius: var(--border-radius);
+      text-align: center;
+      padding: 7px 10px 0 10px;
+      border: 1px solid var(--primary-color);
+      font-size: 0.8rem;
+      white-space: nowrap;
+    }
+  }
+
+  .MuiTextField-root {
+    input,
+    svg {
+      color: black !important;
+    }
+  }
+
+  .GroupEditName {
+    margin-left: 0.5rem;
+  }
+}
+
+.StoryMapCreateTypeSelection {
+  .ModalSelection-Option {
+    opacity: 0.3;
+    cursor: not-allowed;
+
+    &:hover {
+      opacity: 0.3;
+    }
+
+    &.Enabled {
+      opacity: 1;
+      cursor: pointer;
+
+      &:hover {
+        opacity: var(--base-hovered-opacity);
+      }
+    }
+  }
+}
+
+
+.StoryMapConfig {
+  .AdminForm {
+    overflow: visible;
+  }
+
+  .Section {
+    background-color: unset !important;
+    position: relative;
+  }
+
+  .SaveButton-Section {
+    margin-bottom: 1rem;
+    margin-right: 1rem;
+    display: flex;
+    flex-direction: row-reverse;
+  }
+
+  .OverrideAdminLevel {
+    margin-bottom: 0.5rem;
+  }
+}

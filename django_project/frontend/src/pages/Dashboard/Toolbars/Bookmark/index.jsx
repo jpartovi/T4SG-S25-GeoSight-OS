@@ -61,6 +61,7 @@ export default function Bookmark({ map }) {
   const [uploading, setUploading] = useState(false)
   const [open, setOpen] = useState(false)
   const [name, setName] = useState('')
+  const [description, setDescription] = useState('')
   const [error, setError] = useState('')
 
   // Bookmarks
@@ -120,7 +121,8 @@ export default function Bookmark({ map }) {
     setUploading(true);
     const data = projectCheckpointRef.current.getData();
     try {
-      const response = await DjangoRequests.post(url, { ...data, name: name })
+      /* adding a new thins about description */
+      const response = await DjangoRequests.post(url, { ...data, name: name, description: description })
       fetchBookmarks()
       setOpen(false)
       setUploading(false)
@@ -132,7 +134,9 @@ export default function Bookmark({ map }) {
   }
 
   // On save as data
+  // adding a new thins about description
   const onSaveAs = () => {
+    setDescription('')
     save(`/api/dashboard/${slug}/bookmarks/create`)
   }
 
@@ -167,7 +171,7 @@ export default function Bookmark({ map }) {
         <div className='Active'>
           <PluginChild title={'Bookmark'}>
             <a>
-              <StarOffIcon/>
+              <StarOffIcon />
             </a>
           </PluginChild>
         </div>
@@ -184,7 +188,7 @@ export default function Bookmark({ map }) {
                   setOpen(true)
                   setName('')
                 }}>
-                <SaveAsIcon/> Save As...
+                <SaveAsIcon /> Save As...
               </ThemeButton>
             </div> : null
         }
@@ -192,71 +196,75 @@ export default function Bookmark({ map }) {
         <div className='Body'>
           <table>
             <tbody>
-            {
-              bookmarks === null ? <tr>
+              {
+                bookmarks === null ? <tr>
                   <td>Loading</td>
                 </tr> :
-                <Fragment>
-                  {
-                    bookmarks.map(bookmark => {
-                      return (
-                        <tr
-                          key={bookmark.id}
-                          className={'Bookmark ' + (bookmark.id === selectedBookmark.id ? 'Selected' : '')}
-                          onClick={() => {
-                            dispatch(Actions.SelectedBookmark.change(bookmark))
-                          }}
-                        >
-                          <td><StarOnIcon className='StarIcon'/></td>
-                          <td>
-                            <div>{bookmark.name}</div>
-                          </td>
-                          {
-                            !isEmbed && bookmark.id && (user.is_staff || user.username === bookmark.creator) ?
-                              <Fragment>
-                                <td>
-                                  <EditIcon
-                                    className='EditIcon'
-                                    onClick={(e) => {
-                                      setSaveBookmarkID(bookmark.id)
-                                      setOpen(true)
-                                      setName(bookmark.name)
-                                      e.stopPropagation()
-                                    }}/>
-                                  <HighlightOffIcon
-                                    className='DeleteIcon'
-                                    onClick={(e) => {
-                                      if (confirm(`Are you sure you want to delete ${bookmark.name}?`)) {
-                                        $.ajax({
-                                          url: `/api/dashboard/${slug}/bookmarks/${bookmark.id}`,
-                                          method: 'DELETE',
-                                          success: function () {
-                                            if (selectedBookmark.id === bookmark.id) {
-                                              dispatch(
-                                                Actions.SelectedBookmark.change({
-                                                  id: 0,
-                                                  name: 'Default'
-                                                })
-                                              )
-                                            }
-                                            fetchBookmarks()
-                                          },
-                                          beforeSend: beforeAjaxSend
-                                        });
+                  <Fragment>
+                    {
+                      bookmarks.map(bookmark => {
+                        return (
+                          <tr
+                            key={bookmark.id}
+                            className={'Bookmark ' + (bookmark.id === selectedBookmark.id ? 'Selected' : '')}
+                            onClick={() => {
+                              dispatch(Actions.SelectedBookmark.change(bookmark))
+                            }}
+                          >
+                            <td><StarOnIcon className='StarIcon' /></td>
+                            <td>
+                              <div>{bookmark.name}</div>
+                              {bookmark.description && (
+                                <div className="bookmark-description">{bookmark.description}</div>
+                              )}
+                            </td>
+                            {
+                              !isEmbed && bookmark.id && (user.is_staff || user.username === bookmark.creator) ?
+                                <Fragment>
+                                  <td>
+                                    <EditIcon
+                                      className='EditIcon'
+                                      onClick={(e) => {
+                                        setSaveBookmarkID(bookmark.id)
+                                        setOpen(true)
+                                        setName(bookmark.name)
+                                        setDescription(bookmark.description)
                                         e.stopPropagation()
-                                      }
-                                      e.stopPropagation()
-                                    }}/>
-                                </td>
-                              </Fragment>
-                              : <td></td>
-                          }
-                        </tr>
-                      )
-                    })
-                  }
-                </Fragment>
-            }
+                                      }} />
+                                    <HighlightOffIcon
+                                      className='DeleteIcon'
+                                      onClick={(e) => {
+                                        if (confirm(`Are you sure you want to delete ${bookmark.name}?`)) {
+                                          $.ajax({
+                                            url: `/api/dashboard/${slug}/bookmarks/${bookmark.id}`,
+                                            method: 'DELETE',
+                                            success: function () {
+                                              if (selectedBookmark.id === bookmark.id) {
+                                                dispatch(
+                                                  Actions.SelectedBookmark.change({
+                                                    id: 0,
+                                                    name: 'Default'
+                                                  })
+                                                )
+                                              }
+                                              fetchBookmarks()
+                                            },
+                                            beforeSend: beforeAjaxSend
+                                          });
+                                          e.stopPropagation()
+                                        }
+                                        e.stopPropagation()
+                                      }} />
+                                  </td>
+                                </Fragment>
+                                : <td></td>
+                            }
+                          </tr>
+                        )
+                      })
+                    }
+                  </Fragment>
+              }
             </tbody>
           </table>
         </div>
@@ -292,8 +300,20 @@ export default function Bookmark({ map }) {
           <TextField
             fullWidth label="Bookmark Name"
             value={name} onChange={(event) => {
-            setName(event.target.value)
-          }}/>
+              setName(event.target.value)
+            }} />
+          <TextField
+            fullWidth
+            label="Description"
+            multiline
+            rows={4}
+            value={description}
+            onChange={(event) => {
+              setDescription(event.target.value)
+            }}
+            placeholder="Write a brief description of what this bookmark represents..."
+            style={{ marginTop: '16px' }}
+          />
           {error ? <div className='error'>{error}</div> : ""}
         </ModalContent>
         <ModalFooter>
@@ -309,7 +329,7 @@ export default function Bookmark({ map }) {
             }}
             disabled={
               !name || !projectCheckpointEnable || uploading
-            }/>
+            } />
         </ModalFooter>
       </Modal>
     </CustomPopover>

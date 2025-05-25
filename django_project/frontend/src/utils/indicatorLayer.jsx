@@ -24,6 +24,7 @@ export const SingleIndicatorTypes = [SingleIndicatorType, 'Float']
 export const MultiIndicatorType = 'Multi Indicator'
 export const DynamicIndicatorType = 'Dynamic Indicator'
 export const RelatedTableLayerType = 'Related Table'
+export const StoryMapType = 'Story Map'
 
 export const defaultFields = [
   'indicator.name', 'indicator.value', 'indicator.label', 'indicator.time',
