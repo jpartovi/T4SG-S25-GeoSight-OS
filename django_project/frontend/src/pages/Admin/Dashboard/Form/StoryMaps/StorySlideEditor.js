@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './style.scss';
 
 // Component to edit or create a story slide
-export default function StorySlideEditor({ existingSlide, onSave, onCancel, availableIndicators, indicatorLookup }) {
+export default function StorySlideEditor({ existingSlide, onSave, onCancel, availableIndicators, indicatorLookup = {} }) {
   // Initialize state from existing slide or defaults
   const [title, setTitle] = useState(existingSlide?.title || '');
   const [description, setDescription] = useState(existingSlide?.description || '');
@@ -12,12 +12,19 @@ export default function StorySlideEditor({ existingSlide, onSave, onCancel, avai
 
   // Handle save button click
   const handleSave = () => {
-    const checkpoint = indicatorLookup[selectedIndicator];
-
-    if (!checkpoint) {
-      alert('Selected indicator does not have a checkpoint');
-      return;
-    }
+    // Create a default checkpoint if indicatorLookup is not provided
+    const checkpoint = indicatorLookup[selectedIndicator] || {
+      selected_indicator_layers: [selectedIndicator],
+      selected_context_layers: [],
+      selected_basemap: 0,
+      filters: {},
+      extent: null,
+      indicator_layer_show: true,
+      context_layer_show: false,
+      selected_admin_level: 0,
+      is_3d_mode: false,
+      position: { x: 0, y: 0, z: 0 }
+    };
 
     // Construct the slide object and pass it to onSave callback
     const slide = {

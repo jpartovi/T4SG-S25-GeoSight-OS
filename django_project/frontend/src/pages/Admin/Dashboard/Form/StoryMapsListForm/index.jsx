@@ -38,13 +38,13 @@ const groupDefault = {
 export default function StoryMapsListForm({
   pageName = 'Story Maps',
   data = [],
-  dataStructure,
-  setDataStructure,
-  removeSlideAction,
-  updateSlideAction,
-  addSlideToMapAction,
-  editSlideInMapAction,
-  otherSlideActions
+  dataStructure = { children: [] },
+  setDataStructure = () => {},
+  removeSlideAction = () => {},
+  updateSlideAction = () => {},
+  addSlideToMapAction = () => {},
+  editSlideInMapAction = () => {},
+  otherSlideActions = () => {}
 }) {
   const className = pageName.replaceAll(' ', '');
   const singularPageName = 'Story Slide';
@@ -75,18 +75,23 @@ export default function StoryMapsListForm({
 
   // Add missing UUIDs to structure if not present
   useEffect(() => {
+    if (!dataStructure) return;
+    
     const assignUuids = (structure) => {
+      if (!structure) return;
       if (!structure.id) structure.id = uuidv4();
-      structure.children?.forEach(child => {
-        if (typeof child === 'object') {
-          assignUuids(child);
-        }
-      });
+      if (structure.children && Array.isArray(structure.children)) {
+        structure.children.forEach(child => {
+          if (typeof child === 'object' && child !== null) {
+            assignUuids(child);
+          }
+        });
+      }
     };
 
     assignUuids(dataStructure);
     setDataStructure({ ...dataStructure });
-  }, []);
+  }, [dataStructure, setDataStructure]);
 
   /** Add a new StoryMap (group) */
   const addGroup = () => {

@@ -24,17 +24,20 @@ import './style.scss';
 
 export default function StoryMapsForm() {
   const dispatch = useDispatch();
+  const dashboardData = useSelector(state => state.dashboard.data) || {};
   const {
-    indicators: dashboardIndicators,
-    relatedTables: dashboardRelatedTables,
-    indicatorLayers, // now treated as slides
-    indicatorLayersStructure, // treated as storyMap structure
-    referenceLayer
-  } = useSelector(state => state.dashboard.data);
+    indicators: dashboardIndicators = [],
+    relatedTables: dashboardRelatedTables = {},
+    indicatorLayers = [], // now treated as slides
+    indicatorLayersStructure = {}, // treated as storyMap structure
+    referenceLayer = null
+  } = dashboardData;
 
-  const indicators = dashboardIndicators;
-  const relatedTables = dictDeepCopy(dashboardRelatedTables, true);
-  const referenceLayerData = useSelector(state => state.referenceLayerData[referenceLayer?.identifier]);
+  const indicators = dashboardIndicators || [];
+  const relatedTables = dashboardRelatedTables ? dictDeepCopy(dashboardRelatedTables, true) : {};
+  const referenceLayerData = useSelector(state => {
+    return referenceLayer?.identifier ? (state.referenceLayerData || {})[referenceLayer.identifier] : null;
+  });
 
   const [currentMapName, setCurrentMapName] = useState('');
   const [slideEditorOpen, setSlideEditorOpen] = useState(false);
@@ -60,12 +63,12 @@ export default function StoryMapsForm() {
     <Fragment>
       <StoryMapsListForm
         pageName={'Story Maps'}
-        data={indicatorLayers.map(layer => ({ ...layer, trueId: -1 }))}
-        dataStructure={indicatorLayersStructure}
+        data={(indicatorLayers || []).map(layer => ({ ...layer, trueId: -1 }))}
+        dataStructure={indicatorLayersStructure || {}}
         setDataStructure={structure => {
           dispatch(Actions.Dashboard.updateStructure('indicatorLayersStructure', structure));
         }}
-        defaultListData={indicators.map(ind => ind.name)}
+        defaultListData={(indicators || []).map(ind => ind?.name || '')}
         addLayerAction={(indicator, mapName) => {
           const checkpoint = createCheckpointFromIndicator(indicator.id);
           const newSlide = {
@@ -100,6 +103,7 @@ export default function StoryMapsForm() {
               }}
               onCancel={() => setSlideEditorOpen(false)}
               availableIndicators={indicators}
+              indicatorLookup={{}} // Provide an empty object as default
             />
           </ModalContent>
         </Modal>

@@ -41,6 +41,33 @@ export const DashboardFormContent = memo(
     // @ts-ignore
     const user_permission = useSelector(state => state.dashboard?.data?.user_permission);
     const { t } = useTranslation();
+    
+    // Safely render the appropriate form based on the page
+    const renderForm = () => {
+      try {
+        if (page === PAGES.BASEMAPS) return <BasemapsForm />;
+        if (page === PAGES.INDICATORS) return <IndicatorsForm />;
+        if (page === PAGES.INDICATOR_LAYERS) return <IndicatorLayersForm />;
+        if (page === PAGES.CONTEXT_LAYERS) return <ContextLayerForm />;
+        if (page === PAGES.FILTERS) return <FiltersForm />;
+        if (page === PAGES.WIDGETS) return <WidgetForm />;
+        if (page === PAGES.RELATED_TABLES) return <RelatedTableForm />;
+        if (page === PAGES.TOOLS) return <ToolsForm />;
+        if (page === PAGES.SHARE && user_permission.share) return <ShareForm />;
+        if (page === PAGES.STORYMAPS) {
+          return (
+            <div style={{ display: 'block', height: 'auto', opacity: 1 }}>
+              <StoryMapsForm />
+            </div>
+          );
+        }
+        return null;
+      } catch (error) {
+        console.error("Error rendering form:", error);
+        return <div>Error loading form content</div>;
+      }
+    };
+    
     return (
       <div className='DashboardFormContent'>
         {
@@ -48,24 +75,7 @@ export const DashboardFormContent = memo(
             <>
               <GeneralForm />
               <IndicatorLayersControl />
-              {
-                page == PAGES.BASEMAPS ? <BasemapsForm /> :
-                  page == PAGES.INDICATORS ? <IndicatorsForm /> :
-                    page == PAGES.INDICATOR_LAYERS ? <IndicatorLayersForm /> :
-                      page == PAGES.CONTEXT_LAYERS ? <ContextLayerForm /> :
-                        page == PAGES.FILTERS ? <FiltersForm /> :
-                          page == PAGES.WIDGETS ? <WidgetForm /> :
-                            page == PAGES.RELATED_TABLES ?
-                              <RelatedTableForm /> :
-                              page == PAGES.TOOLS ? <ToolsForm /> :
-                                page == PAGES.SHARE && user_permission.share ?
-                                  <ShareForm /> :
-                                  page === PAGES.STORYMAPS ? (
-                                    <div style={{ display: 'block', height: 'auto', opacity: 1 }}>
-                                      <StoryMapsForm />
-                                    </div>
-                                  ) : null
-              }
+              {renderForm()}
             </> :
             <div className='DashboardFormLoading'>
               <div className='DashboardFormLoadingSection'>
