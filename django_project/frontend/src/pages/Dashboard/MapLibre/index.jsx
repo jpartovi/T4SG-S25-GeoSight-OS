@@ -59,6 +59,8 @@ import { cogProtocol } from "@geomatico/maplibre-cog-protocol";
 import { PopupToolbars } from "../Toolbars/PopupToolbars";
 import { Variables } from "../../../utils/Variables";
 import { addLayerWithOrder } from "./Render";
+import StoryMapSelector from '../Toolbars/StoryMapSelector';
+import BottomPanel from '../MiddlePanel/BottomPanel';
 
 maplibregl.addProtocol('cog', cogProtocol);
 
@@ -143,10 +145,10 @@ export default function MapLibre(
       newMap.once("load", () => {
         setMap(newMap)
         setTimeout(() =>
-            document.querySelector('.maplibregl-ctrl-compass')
-              .addEventListener('click', () => {
-                newMap.easeTo({ pitch: 0, bearing: 0 })
-              }),
+          document.querySelector('.maplibregl-ctrl-compass')
+            .addEventListener('click', () => {
+              newMap.easeTo({ pitch: 0, bearing: 0 })
+            }),
           500,
         )
       })
@@ -159,11 +161,11 @@ export default function MapLibre(
         const popupElements = document.querySelectorAll('#map .maplibregl-popup-anchor-center');
         if (contextLayersExists) {
           popupElements.forEach(popup => {
-              popup.style.zIndex = '-9'; // Lower than your intended layer
+            popup.style.zIndex = '-9'; // Lower than your intended layer
           });
         } else {
           popupElements.forEach(popup => {
-              popup.style.zIndex = '0'; // Lower than your intended layer
+            popup.style.zIndex = '0'; // Lower than your intended layer
           });
         }
       })
@@ -245,10 +247,10 @@ export default function MapLibre(
     map.addSource(id, source)
     addLayerWithOrder(
       map, {
-        ...layer,
-        id: id,
-        source: id,
-      },
+      ...layer,
+      id: id,
+      source: id,
+    },
       Variables.LAYER_CATEGORY.BASEMAP
     )
   }
@@ -266,7 +268,7 @@ export default function MapLibre(
     className={'DashboardMap' + (!EmbedConfig().map ? ' HideMap' : '')}>
     {/* TOOLBARS */}
     <div className='Toolbar'>
-      <TiltControl map={map} is3DView={is3dMode} force={force}/>
+      <TiltControl map={map} is3DView={is3dMode} force={force} />
       <div className='Toolbar-Left'>
         {
           leftPanelProps ?
@@ -285,21 +287,22 @@ export default function MapLibre(
         <Plugin className={'ReferenceLayerToolbar'}>
           <div>
             <PluginChild title={'Reference Layer selection'}
-                         className={'ReferenceLayerSelectorWrapper'}>
-              <ReferenceLayerSection/>
+              className={'ReferenceLayerSelectorWrapper'}>
+              <ReferenceLayerSection />
             </PluginChild>
           </div>
         </Plugin>
-        <GlobalDateSelector/>
+        <GlobalDateSelector />
+        <BottomPanel />
       </div>
 
       <div className='Toolbar-Middle'>
-        <div className='Separator'/>
-        <HomeButton map={map}/>
-        <LabelToggler/>
+        <div className='Separator' />
+        <HomeButton map={map} />
+        <LabelToggler />
         {
           tools.find((tool => tool.name === Variables.DASHBOARD.TOOL.COMPARE_LAYERS)) ?
-            <CompareLayer disabled={is3dMode}/> : null
+            <CompareLayer disabled={is3dMode} /> : null
         }
         {/* 3D View */}
         {
@@ -316,29 +319,32 @@ export default function MapLibre(
                     }
                     dispatch(Actions.Map.change3DMode(!is3dMode))
                   }}>
-                  {is3dMode ? <ThreeDimensionOnIcon/> :
-                    <ThreeDimensionOffIcon/>}
+                  {is3dMode ? <ThreeDimensionOnIcon /> :
+                    <ThreeDimensionOffIcon />}
                 </PluginChild>
               </div>
             </Plugin> : null
         }
-        <PopupToolbars map={map} ref={drawingRef}/>
-        <div className='Separator'/>
+        <PopupToolbars map={map} ref={drawingRef} />
+        <div className='Separator' />
       </div>
 
       {/* Embed */}
       <div className='Toolbar-Right'>
-        <SearchGeometryInput map={map}/>
+        <SearchGeometryInput map={map} />
         <Plugin className='EmbedControl'>
           <div className='Active'>
             <PluginChild title={'Get embed code'}>
-              <EmbedControl map={map}/>
+              <EmbedControl map={map} />
             </PluginChild>
           </div>
         </Plugin>
-        <DownloaderData/>
+        <DownloaderData />
         <Plugin className='BookmarkControl'>
-          <Bookmark map={map}/>
+          <Bookmark map={map} />
+        </Plugin>
+        <Plugin className='StorymapControl'>
+          <StoryMapSelector map={map} />
         </Plugin>
         {
           rightPanelProps ?
@@ -359,13 +365,13 @@ export default function MapLibre(
 
     <div id="map"></div>
 
-    <ReferenceLayers map={map} deckgl={deckgl} is3DView={is3dMode}/>
-    <ContextLayers map={map}/>
+    <ReferenceLayers map={map} deckgl={deckgl} is3DView={is3dMode} />
+    <ContextLayers map={map} />
     {
       map ? <>
-        <IndicatorLayersReferenceControl map={map}/>
-        <DatasetGeometryData/>
-        <ReferenceLayerCentroid map={map}/>
+        <IndicatorLayersReferenceControl map={map} />
+        <DatasetGeometryData />
+        <ReferenceLayerCentroid map={map} />
       </> : null
     }
   </section>
