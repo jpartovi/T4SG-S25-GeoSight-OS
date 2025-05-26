@@ -477,12 +477,12 @@ export const axiosPostWithSession = async function (name, url, data) {
     DjangoRequests.post(url, data, {})
       .then(response => response.data)
       .then(data => {
-          if (session.isValid) {
-            resolve(data)
-          }
+        if (session.isValid) {
+          resolve(data)
         }
+      }
       ).catch(err => {
-      reject(err)
-    });
+        reject(err)
+      });
   })
 }

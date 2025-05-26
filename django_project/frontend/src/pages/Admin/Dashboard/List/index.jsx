@@ -14,24 +14,39 @@
  */
 
 import React from 'react';
-import {GridActionsCellItem} from "@mui/x-data-grid";
+import { GridActionsCellItem } from "@mui/x-data-grid";
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import {render} from '../../../../app';
-import {store} from '../../../../store/admin';
-import {pageNames} from '../../index';
-import {COLUMNS, COLUMNS_ACTION} from "../../Components/List";
+import { render } from '../../../../app';
+import { store } from '../../../../store/admin';
+import { pageNames } from '../../index';
+import { COLUMNS, COLUMNS_ACTION } from "../../Components/List";
 import PermissionModal from "../../Permission";
-import {VisibilityIcon} from "../../../../components/Icons";
+import { VisibilityIcon } from "../../../../components/Icons";
 import AdminList from "../../../../components/AdminList";
-import {useConfirmDialog} from "../../../../providers/ConfirmDialog";
-import {DjangoRequests} from "../../../../Requests";
-import {useTranslation} from "react-i18next";
+import { useConfirmDialog } from "../../../../providers/ConfirmDialog";
+import { DjangoRequests } from "../../../../Requests";
+import { useTranslation } from "react-i18next";
 
 import './style.scss';
 
 export function resourceActions(params) {
-  return COLUMNS_ACTION(params, urls.admin.dashboardList)
+  try {
+    // valid params before calling COLUMNS_ACTION
+    if (!params || !params.id) {
+      return null;
+    }
+
+    //get absolute URLs to avoid lang prefix issues
+    const dashboardListUrl = urls.admin.dashboardList.startsWith('/') && !urls.admin.dashboardList.startsWith('//')
+      ? window.location.origin + urls.admin.dashboardList
+      : urls.admin.dashboardList;
+
+    return COLUMNS_ACTION(params, dashboardListUrl);
+  } catch (error) {
+    console.error("Error in resourceActions:", error);
+    return null;
+  }
 }
 
 export function resourceActionsList(params) {
@@ -63,7 +78,7 @@ export function resourceActionsList(params) {
           })
         }
       }>
-        <ContentCopyIcon/> Duplicate
+        <ContentCopyIcon /> Duplicate
       </div>
     </> : null
   )
@@ -87,7 +102,7 @@ export default function DashboardList() {
     serverKey: 'creator__username'
   }
   columns[5] = { field: 'created_at', headerName: t('admin.columns.createdAt'), flex: 0.5, type: 'date' }
-  columns[6] = { field: 'modified_at', headerName: t('admin.columns.modifiedAt'), flex: 0.5 , type: 'date' }
+  columns[6] = { field: 'modified_at', headerName: t('admin.columns.modifiedAt'), flex: 0.5, type: 'date' }
   columns[7] = { field: 'modified_by', headerName: t('admin.columns.modifiedBy'), flex: 0.5, serverKey: 'modified_by__username' }
   columns[8] = {
     field: 'actions',
@@ -105,7 +120,7 @@ export default function DashboardList() {
               <a>
                 <PermissionModal
                   name={params.row.name}
-                  urlData={urls.api.permission.replace('/0', `/${params.id}`)}/>
+                  urlData={urls.api.permission.replace('/0', `/${params.id}`)} />
               </a>
             }
             label="Change Share Configuration."
@@ -120,7 +135,7 @@ export default function DashboardList() {
                 className={"MuiButtonLike CellLink"}
                 href={urls.api.map.replace('/0', `/${params.id}`)}>
                 <div className='ButtonIcon'>
-                  <VisibilityIcon/>
+                  <VisibilityIcon />
                 </div>
               </a>
             }
@@ -133,7 +148,7 @@ export default function DashboardList() {
           <GridActionsCellItem
             className='TextButton'
             title={'Need to re-select reference layer.'}
-            icon={<ErrorOutlineIcon className='error'/>}
+            icon={<ErrorOutlineIcon className='error' />}
           />
         )
       }

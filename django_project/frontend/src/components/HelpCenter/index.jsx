@@ -55,7 +55,21 @@ export const HelpCenter = forwardRef(({ }, ref) => {
   useEffect(
     () => {
       setLoading(true)
-      fetch(`/docs/data?relative_url=` + window.location.pathname,)
+      
+      // Strip language prefix from pathname if present
+      const pathParts = window.location.pathname.split('/');
+      let relativePath = window.location.pathname;
+      
+      // Check if first path segment is a language code (e.g., en-US)
+      if (pathParts.length > 1 && /^[a-z]{2}-[A-Z]{2}$/.test(pathParts[1])) {
+        // Remove language prefix and rejoin
+        relativePath = '/' + pathParts.slice(2).join('/');
+      }
+      
+      // Use absolute URL to avoid language prefix issues
+      const url = `${window.location.origin}/docs/data?relative_url=${relativePath}`;
+      
+      fetch(url)
         .then(response => response.json())
         .then((response) => {
           if (response.detail) {
@@ -66,6 +80,7 @@ export const HelpCenter = forwardRef(({ }, ref) => {
           setData(response)
         })
         .catch(err => {
+          console.error("Help center error:", err);
           setLoading(false)
         })
     }, [])

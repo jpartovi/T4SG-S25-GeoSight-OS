@@ -514,17 +514,26 @@ export function DashboardForm({ onPreview }) {
               dangerouslySetInnerHTML={{ __html: contentTitle }}></b>
           </div>
           <div className='AdminContentHeader-Right'>
-            {
-              id ?
-                resourceActions({
-                  id: id,
-                  row: {
-                    id,
-                    name,
-                    permission: user_permission
-                  }
-                }) : null
-            }
+            {/* Wrap resourceActions in try-catch to prevent rendering errors */}
+            {(() => {
+              try {
+                // only render actions if we have required data
+                if (id && user_permission) {
+                  return resourceActions({
+                    id: id,
+                    row: {
+                      id,
+                      name,
+                      permission: user_permission
+                    }
+                  });
+                }
+                return null;
+              } catch (error) {
+                console.error("Error rendering resource actions:", error);
+                return null;
+              }
+            })()}
             <DashboardHistory
               page={currentPage}
               setCurrentPage={setCurrentPage}
